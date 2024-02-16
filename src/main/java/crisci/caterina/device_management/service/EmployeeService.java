@@ -66,11 +66,7 @@ public class EmployeeService {
                 System.err.printf("Employee %d does not have any device with id %d currently assigned\n", employeeId, deviceId);
                 return null;
             }
-
-            device = employeeDevice.get();
-            device.setDeviceStatus(DeviceStatus.AVAILABLE);
-            device.setEmployee(null);
-            deviceService.save(device);
+            assignOrFreeDevice(employeeDevice.get(), employee, false);
 
             employee.getDevices().remove(device);
             return save(employee);
@@ -82,11 +78,21 @@ public class EmployeeService {
         }
 
         employee.getDevices().add(device);
-
-        device.setDeviceStatus(DeviceStatus.ASSIGNED);
-        device.setEmployee(employee);
-        deviceService.save(device);
+        assignOrFreeDevice(device, employee, true);
 
         return save(employee);
+    }
+
+    private void assignOrFreeDevice(Device device, Employee employee, boolean toAssign) {
+        if (toAssign) {
+            device.setDeviceStatus(DeviceStatus.ASSIGNED);
+            device.setEmployee(employee);
+            deviceService.save(device);
+            return;
+        }
+
+        device.setDeviceStatus(DeviceStatus.AVAILABLE);
+        device.setEmployee(null);
+        deviceService.save(device);
     }
 }
