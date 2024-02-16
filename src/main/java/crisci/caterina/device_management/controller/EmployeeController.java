@@ -26,19 +26,24 @@ public class EmployeeController {
         return employeeService.getAll();
     }
 
-    @GetMapping("/{deviceId}")
-    public Employee getById(@PathVariable long deviceId) throws Exception {
-        return employeeService.getById(deviceId);
+    @GetMapping("/{employeeId}")
+    public Employee getById(@PathVariable long employeeId) throws Exception {
+        return employeeService.getById(employeeId);
     }
 
-    @PutMapping("/{deviceId}")
-    public Employee findAndUpdate(@PathVariable long deviceId, @RequestBody Employee body) throws Exception {
-        return employeeService.updateById(deviceId, body);
+    @PutMapping("/{employeeId}")
+    public Employee findAndUpdate(@PathVariable long employeeId, @RequestBody Employee body) throws Exception {
+        return employeeService.updateById(employeeId, body);
     }
 
-    @DeleteMapping("/{deviceId}")
+    @DeleteMapping("/{employeeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT) // <-- 204 NO CONTENT
-    public void findAndDelete(@PathVariable long deviceId) {
-        employeeService.deleteById(deviceId);
+    public void findAndDelete(@PathVariable long employeeId) {
+        employeeService.deleteById(employeeId);
+    }
+
+    @PostMapping("/{employeeId}/device")
+    public Employee assignDevice(@PathVariable long employeeId, @RequestParam(name = "id") long deviceId, @RequestParam(name = "assign") boolean toBeAssigned) {
+        return employeeService.assignDevice(employeeId, deviceId, toBeAssigned);
     }
 }

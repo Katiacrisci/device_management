@@ -33,6 +33,10 @@ public class DeviceService {
         return deviceRepository.save(device);
     }
 
+    public boolean existsDeviceWithId(Long id) {
+        return deviceRepository.existsById(id);
+    }
+
     public void deleteById(Long id) {
         deviceRepository.deleteById(id);
     }
