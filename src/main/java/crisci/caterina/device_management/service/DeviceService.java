@@ -1,5 +1,6 @@
 package crisci.caterina.device_management.service;
 
+import crisci.caterina.device_management.dto.device.NewDeviceDTO;
 import crisci.caterina.device_management.exceptions.NotFoundException;
 import crisci.caterina.device_management.models.Device;
 import crisci.caterina.device_management.repository.DeviceRepository;
@@ -24,8 +25,8 @@ public class DeviceService {
         return deviceRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
     }
 
-    public Device save(Device device) {
-        return deviceRepository.save(device);
+    public Device save(NewDeviceDTO device) {
+        return deviceRepository.save(Device.fromDTO(device));
     }
 
     public Device updateById(Long id, Device device) {

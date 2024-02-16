@@ -1,10 +1,15 @@
 package crisci.caterina.device_management.controller;
 
+import crisci.caterina.device_management.dto.device.NewDeviceDTO;
+import crisci.caterina.device_management.dto.device.NewDeviceResponseDTO;
+import crisci.caterina.device_management.exceptions.BadRequestException;
 import crisci.caterina.device_management.models.Device;
 import crisci.caterina.device_management.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,9 +21,12 @@ public class DeviceController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED) // <-- 201
-    public Device saveDevice(@RequestBody Device body) throws Exception {
-        System.out.println(body);
-        return deviceService.save(body);
+    public NewDeviceResponseDTO saveDevice(@RequestBody @Validated NewDeviceDTO body, BindingResult validation) throws Exception {
+        if (validation.hasErrors()) {
+            throw new BadRequestException(validation.getAllErrors());
+        }
+        Device device = deviceService.save(body);
+        return new NewDeviceResponseDTO(device.getId());
     }
 
     @GetMapping("")
