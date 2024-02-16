@@ -4,17 +4,20 @@ import crisci.caterina.device_management.exceptions.NotFoundException;
 import crisci.caterina.device_management.models.Device;
 import crisci.caterina.device_management.repository.DeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class DeviceService {
     @Autowired
     private DeviceRepository deviceRepository;
 
-    public List<Device> getAll() {
-        return deviceRepository.findAll();
+    public Page<Device> getAllPaged(int page, int size, String sort) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        return deviceRepository.findAll(pageable);
     }
 
     public Device getById(Long id) {

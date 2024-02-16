@@ -3,10 +3,9 @@ package crisci.caterina.device_management.controller;
 import crisci.caterina.device_management.models.Device;
 import crisci.caterina.device_management.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/devices")
@@ -23,8 +22,9 @@ public class DeviceController {
     }
 
     @GetMapping("")
-    public List<Device> getDevices() {
-        return deviceService.getAll();
+    public Page<Device> getAuthors(@RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy) {
+        return deviceService.getAllPaged(page, size, sortBy);
     }
 
     @GetMapping("/{deviceId}")

@@ -3,10 +3,9 @@ package crisci.caterina.device_management.controller;
 import crisci.caterina.device_management.models.Employee;
 import crisci.caterina.device_management.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/employees")
@@ -22,8 +21,9 @@ public class EmployeeController {
     }
 
     @GetMapping("")
-    public List<Employee> getEmployees() {
-        return employeeService.getAll();
+    public Page<Employee> getEmployees(@RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy) {
+        return employeeService.getAllPaged(page, size, sortBy);
     }
 
     @GetMapping("/{employeeId}")
