@@ -20,7 +20,7 @@ public class Employee {
     private String surname;
     private String email;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     private List<Device> devices;
 
 
