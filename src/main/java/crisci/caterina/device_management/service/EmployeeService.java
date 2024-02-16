@@ -56,12 +56,12 @@ public class EmployeeService {
 
         Employee employee = getById(employeeId);
 
-        if (!toBeAssigned) {
-            Optional<Device> employeeDevice = employee.getDevices()
-                    .stream()
-                    .filter(eDevice -> eDevice.getId().equals(deviceId))
-                    .findFirst();
+        Optional<Device> employeeDevice = employee.getDevices()
+                .stream()
+                .filter(eDevice -> eDevice.getId().equals(deviceId))
+                .findFirst();
 
+        if (!toBeAssigned) {
             if (employeeDevice.isEmpty()) {
                 System.err.printf("Employee %d does not have any device with id %d currently assigned\n", employeeId, deviceId);
                 return null;
@@ -74,6 +74,11 @@ public class EmployeeService {
 
             employee.getDevices().remove(device);
             return save(employee);
+        }
+
+        if (employeeDevice.isPresent()) {
+            System.err.printf("Employee %d already has device with id %d currently assigned\n", employeeId, deviceId);
+            return null;
         }
 
         employee.getDevices().add(device);
