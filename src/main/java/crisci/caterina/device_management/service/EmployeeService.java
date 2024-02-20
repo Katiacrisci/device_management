@@ -36,4 +36,8 @@ public class EmployeeService {
     public void deleteById(Long id) {
         employeeRepository.deleteById(id);
     }
+
+    public Employee findByEmail(String email) {
+      return employeeRepository.findByEmail(email);
+    }
 }
