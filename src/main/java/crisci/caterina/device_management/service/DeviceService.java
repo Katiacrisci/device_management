@@ -33,6 +33,10 @@ public class DeviceService {
         if (getById(id) == null) {
             return null;
         }
+        if (id == null || device.getId() == null) {
+            System.err.println("missing id");
+            return null;
+        }
 
         return deviceRepository.save(device);
     }

@@ -1,29 +1,20 @@
 package crisci.caterina.device_management.service;
 
 import crisci.caterina.device_management.exceptions.NotFoundException;
-import crisci.caterina.device_management.models.Device;
-import crisci.caterina.device_management.models.DeviceStatus;
 import crisci.caterina.device_management.models.Employee;
 import crisci.caterina.device_management.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
-    @Autowired
-    private DeviceService deviceService;
 
-    public Page<Employee> getAllPaged(int page, int size, String sort) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
-        return employeeRepository.findAll(pageable);
+    public List<Employee> getAll() {
+        return employeeRepository.findAll();
     }
 
     public Employee getById(Long id) {
@@ -35,7 +26,7 @@ public class EmployeeService {
     }
 
     public Employee updateById(Long id, Employee device) {
-        if (!employeeRepository.existsById(id)) {
+        if (getById(id) == null) {
             return null;
         }
 
@@ -46,57 +37,7 @@ public class EmployeeService {
         employeeRepository.deleteById(id);
     }
 
-    public Employee assignDevice(Long employeeId, Long deviceId, boolean toBeAssigned) {
-        if (!deviceService.existsDeviceWithId(deviceId) || !employeeRepository.existsById(employeeId)) {
-            return null;
-        }
-
-        Device device = deviceService.getById(deviceId);
-
-        if (!DeviceStatus.AVAILABLE.equals(device.getDeviceStatus())) {
-            System.err.printf("Device with id %d is not available right now.\n", deviceId);
-            return null;
-        }
-
-        Employee employee = getById(employeeId);
-
-        Optional<Device> employeeDevice = employee.getDevices()
-                .stream()
-                .filter(eDevice -> eDevice.getId().equals(deviceId))
-                .findFirst();
-
-        if (!toBeAssigned) {
-            if (employeeDevice.isEmpty()) {
-                System.err.printf("Employee %d does not have any device with id %d currently assigned\n", employeeId, deviceId);
-                return null;
-            }
-            assignOrFreeDevice(employeeDevice.get(), employee, false);
-
-            employee.getDevices().remove(device);
-            return save(employee);
-        }
-
-        if (employeeDevice.isPresent()) {
-            System.err.printf("Employee %d already has device with id %d currently assigned\n", employeeId, deviceId);
-            return null;
-        }
-
-        employee.getDevices().add(device);
-        assignOrFreeDevice(device, employee, true);
-
-        return save(employee);
-    }
-
-    private void assignOrFreeDevice(Device device, Employee employee, boolean toAssign) {
-        if (toAssign) {
-            device.setDeviceStatus(DeviceStatus.ASSIGNED);
-            device.setEmployee(employee);
-            deviceService.save(device);
-            return;
-        }
-
-        device.setDeviceStatus(DeviceStatus.AVAILABLE);
-        device.setEmployee(null);
-        deviceService.save(device);
+    public Employee findByEmail(String email) {
+      return employeeRepository.findByEmail(email);
     }
 }
